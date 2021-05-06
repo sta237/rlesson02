@@ -1,0 +1,133 @@
+---
+title: "Lecture 2: Conditional Probability and Independence"
+output: 
+  learnr::tutorial:
+    css: css/styles.css
+runtime: shiny_prerendered
+---
+
+<!-- 
+Before running the document, make sure `learnr` package is available. 
+If missing, you can install the package with `install.packages('learnr')`.
+-->
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Simulating Conditional Probabilities
+
+Recall, one interpretation of _probability_ is long-term relative frequency. Suppose you repeat a random experiment a large number of time, say $N$, and observe $n$ number of event $A$ The relative frequency 
+$$\frac{n}{N}$$ 
+is approximately the probability $P(A)$.
+
+### Example: Rolling an 8-Sided Fair Die Twice
+
+
+$$A=\text{sum of the throws is divisible by 4}$$
+$$B=\text{the two throws are the same}$$
+
+Recall we can generate $N$ simulations of a single roll with:
+
+```{r echo=TRUE, eval=FALSE}
+roll <- sample(x = 1:8, size = N, replace = TRUE)
+
+```
+
+We can use 2 separate `sample` calls to mimic 2 rolls and then combine them using `cbind`.
+
+```{r tworolls, exercise=TRUE, exercise.lines=7}
+N <- 10 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+print(tworolls)
+
+```
+
+Using the `N=1,000,000`, compute $P(A)$, $P(B)$, $P(A\cap B)$, $P(A|B)$, and $P(B|A)$.
+
+$$P(A)$$
+
+```{r pa, exercise=TRUE, exercise.lines=15}
+N <- 10^6 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+
+```
+
+$$P(B)$$
+
+```{r pb, exercise=TRUE, exercise.lines=15}
+N <- 10^6 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+
+```
+
+$$P(A\cap B)$$
+
+```{r paandb, exercise=TRUE, exercise.lines=15}
+N <- 10^6 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+
+```
+
+$$P(A|B)$$
+
+```{r pagivenb, exercise=TRUE, exercise.lines=15}
+N <- 10^6 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+# select those that satisfy b
+tworolls_givenb <- tworolls[tworolls[,1] == tworolls[,2],]
+  
+```
+
+$$P(B|A)$$
+
+```{r pbgivena, exercise=TRUE, exercise.lines=15}
+N <- 10^6 # number of simulations
+roll1 <- sample(1:8, N, replace = TRUE)
+roll2 <- sample(1:8, N, replace = TRUE)
+# use `cbind` to combine them into a matrix 
+tworolls <- cbind(roll1, roll2)
+
+```
+
+
+## Simulating Conditional Events
+
+In this exercise, we will compute the probability of an event based on conditional probabilities.
+
+### Example
+
+Suppose the probability of an adult Canadian experiencing a regular flu during a winter is 12% without a vaccination and with a vaccination, the infection probability is reduced to 3%. If 35% of the adult population in Canada gets vaccinated every year, what is the probability that a randomly selected Canadian adult experiences a regular flu during a winter?
+
+
+```{r flu, exercise=TRUE, exercise.lines=15}
+N <- 100
+# the probabilities
+pvac <- 0.35
+pflu_vac <- 0.03
+pflu_no_vac <- 0.12
+# simulate vaccinated population with TRUE / FALSE otherwise
+s_vac <- sample(
+  x = c(T, F), size = N, replace = TRUE,
+  prob = c(pvac, 1 - pvac)) # we can pass the probabilities manually
+# simulate flu infection based on vaccination
+```
+
+> Hint: After simulating vaccinated popoulations, you can use a for loop with an if / else statement to simulate flu infections. If you are familiar with `tidyverse` or `dplyr`, you can check out `rowwise` operations.
