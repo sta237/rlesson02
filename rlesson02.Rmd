@@ -155,8 +155,8 @@ You may also find `all()` and `any()` useful. See their documentations.
 
 In the following code chunk's `mat_practice`,
 
-1. find the row numbers where the values in the row sum up to smaller than 15
-2. find the column numbers where the values in the column sum up to larger than 10
+1. find the row numbers where the values in the row sum up to smaller than ~~15~~ 50
+2. find the column numbers where the values in the column sum up to larger than ~~10~~ 75
 3. check whether all values in the second row are larger than values in the fourth row AND 
 value 5 is in the last column
 
@@ -166,6 +166,16 @@ mat_practice <- matrix(sample(1:24, 24), 6)
 mat_practice
 1:6[ ] # fill in the bracket with a logical statement
 1:4[ ] # fill in the bracket with a logical statement
+```
+
+```{r practice-logical-relational-solution}
+mat_practice <- matrix(sample(1:24, 24), 6)
+mat_practice
+
+(1:6)[rowSums(mat_practice) < 50] # fill in the bracket with a logical statement
+(1:4)[colSums(mat_practice) > 75] # fill in the bracket with a logical statement
+
+all(mat_practice[2, ] > mat_practice[4, ]) && (5 %in% mat_practice[ , 4])
 ```
 
 ## Estimating Conditional Probabilities
@@ -227,7 +237,7 @@ rowSums(mat)
 To access all simulations of the first rolls, you can use
 
 ```{r first-roll}
-mat[, 1]
+mat[ , 1]
 
 ```
 
@@ -254,6 +264,21 @@ second_rolls <- mat[ , 2]
 pr_a_given_b
 ```
 
+```{r compute-conditional-p-solution}
+N <- 1000
+m <- 2
+rolls <- sample(1:6, N * m, replace = TRUE) 
+mat <- matrix(rolls, nrow = N)
+sum_of_rolls <- rowSums(mat)
+first_rolls <- mat[ , 1]
+second_rolls <- mat[ , 2]
+# P(A|B) = P(A and B) / P(B) = #(A and B) / N / (#(B) / N) = #(A and B) / #(B)
+pr_a_given_b <- sum(
+  (first_rolls == second_rolls) & # B
+  (sum_of_rolls %% 4 == 0)
+) / sum(first_rolls == second_rolls)
+pr_a_given_b
+```
 
 ## Simulating Conditional Events
 
@@ -281,6 +306,71 @@ s_vac <- sample(
 )
 flu <- logical(N)
 # simulate flu infection based on vaccination in a loop
+p_flu
+```
+
+```{r flu-hint-1}
+.
+.
+.
+flu <- logical(N)
+# simulate flu infection based on vaccination in a loop
+for (i in seq_len(N)) { # You may use `seq_len(N)` in place of  `1:N`
+}
+```
+
+```{r flu-hint-2}
+N <- 1000
+# the probabilities
+p_vac <- 0.35
+p_flu_vac <- 0.03
+p_flu_no_vac <- 0.12
+# simulate vaccinated population with TRUE / FALSE otherwise
+s_vac <- sample(
+  x = c(T, F), size = N, replace = TRUE,
+  prob = c(p_vac, 1 - p_vac) # we can adjust the probabilities 
+)
+flu <- logical(N)
+# simulate flu infection based on vaccination in a loop
+for (i in seq_len(N)) {
+  if (s_vac[i]) {
+    flu[i] <- sample(
+      c(T, F), size = 1, 
+      prob = # apply the appropriate probabilities
+      )
+  } else {
+    flu[i] <- sample(
+      c(T, F), size = 1,
+      prob = # apply the appropriate probabilities
+    )
+  }
+}
+p_flu <- sum(flu) / N
+p_flu
+```
+
+
+```{r flu-hint-3}
+N <- 1000
+# the probabilities
+p_vac <- 0.35
+p_flu_vac <- 0.03
+p_flu_no_vac <- 0.12
+# simulate vaccinated population with TRUE / FALSE otherwise
+s_vac <- sample(
+  x = c(T, F), size = N, replace = TRUE,
+  prob = c(p_vac, 1 - p_vac) # we can adjust the probabilities 
+)
+# you can avoid using a loop in the following approach
+flu_vac <- sample(
+  c(T, F), size = sum(s_vac), replace = TRUE, 
+  prob =  # apply the appropriate probabilities
+)
+flu_no_vac <- sample(
+  c(T, F), size = sum(! s_vac), replace = TRUE, 
+  prob =  # apply the appropriate probabilities
+)
+p_flu <- (sum(flu_vac) + sum(flu_no_vac)) / N
 p_flu
 ```
 
