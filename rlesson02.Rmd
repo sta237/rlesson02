@@ -297,7 +297,7 @@ Canadian adult experiences a regular flu during a winter?
 N <- 1000
 # the probabilities
 p_vac <- 0.35
-p_flu_vac <- 0.03
+p_flu_vac <- 0.05
 p_flu_no_vac <- 0.12
 # simulate vaccinated population with TRUE / FALSE otherwise
 s_vac <- sample(
@@ -323,7 +323,7 @@ for (i in seq_len(N)) { # You may use `seq_len(N)` in place of  `1:N`
 N <- 1000
 # the probabilities
 p_vac <- 0.35
-p_flu_vac <- 0.03
+p_flu_vac <- 0.05
 p_flu_no_vac <- 0.12
 # simulate vaccinated population with TRUE / FALSE otherwise
 s_vac <- sample(
@@ -354,7 +354,7 @@ p_flu
 N <- 1000
 # the probabilities
 p_vac <- 0.35
-p_flu_vac <- 0.03
+p_flu_vac <- 0.05
 p_flu_no_vac <- 0.12
 # simulate vaccinated population with TRUE / FALSE otherwise
 s_vac <- sample(
