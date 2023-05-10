@@ -13,28 +13,275 @@ If missing, you can install the package with `install.packages('learnr')`.
 
 ```{r setup, include=FALSE}
 library(learnr)
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
+
+## R Preparation
+
+### Matrix
+
+We discussed vectors in last class. It is often useful to work in 2-dimensions
+when working with data. In R, a 2-dimensional object consisting of values of a 
+single data type.
+
+You can create a matrix using `matrix(<vector of values>, <number of rows>)`.
+
+```{r matrix-num}
+matrix(1:9, 3)
+```
+
+```{r matrix-letters}
+matrix(LETTERS, 2)
+```
+
+> `LETTERS` is a prepopulated vector variable with the capital alphabets.
+
+You can access the individual elements using `[` like vectors. If you use a single
+value or single vector, it treats the matrix as a vector concatenating the columns
+in order.
+
+```{r matrix-access-single}
+mat_ex <- matrix(1:12, 3)
+mat_ex
+mat_ex[5] # 5th value
+mat_ex[c(2, 11)] # 2nd and 11th values
+```
+
+More intuitively, you can use 2-dimensional coordinates to extract the elements
+separated by a comma. The first value corresponds to the row and the second value
+to the column. The index starts at 1 like a single value index.
+
+```{r matrix-2d-coord}
+mat_ex[2, 3] # second row, third column
+mat_ex[c(1, 3), 3] # first and third row, third column
+mat_ex[c(2, 3), c(1, 4)] # second and third row, first and fourth column
+```
+
+If you leave one dimension blank, you can extract across the whole rows or columns.
+
+```{r matrix-blank-dimension}
+mat_ex[1, ] # all values from the first row
+mat_ex[ , 4] # all values from the fourth column
+```
+
+There are a few convenient functions provided for working with multidimensional
+objects. For this exercise, you will need `rowSums()`. Check the documentation
+for the function as well as related functions.
+
+```{r rowSums-doc, exercise=TRUE}
+```
+
+### Relational Operators
+
++  To check whether two (vectors of) values are equation, you can use `==`.
+
+```{r equal}
+"a" == "a"
+"a" == "A"
+1:6 == (0:5 + 1)
+1 == 1:5
+```
+
+> To check whether they are NOT equal you can use `!=`. 
+
++  To check whether a value or elements of a vector is found in another vector,
+use `%in%`. 
+
+```{r in}
+"a" %in% letters
+1:5 %in% 2:3
+1:5 %in% 5:15
+```
+
+> `letters` is a prepopulated vector variable with the lowercase alphabets.
+
++  You can also test for values being greater/less than (or equal to) similarly
+
+```{r gteqlteq}
+5 <= 5
+5 < 5:10
+1:5 > 3:7
+"a" > "b" # alphabetical order
+TRUE > FALSE # TRUE is 1, FALSE is 0
+```
+
+### Logical Operators
+
++  `&&` is AND for operations between single logicals.
+
+```{r and-single}
+TRUE && TRUE
+TRUE && FALSE
+1 && 1 # you can also turn non-zeros/0 to T/F
+```
+
++  `&` is AND for both single values and vectors.
+
+```{r}
+TRUE & FALSE
+c(TRUE, TRUE, TRUE) & c(TRUE, FALSE, TRUE)
+```
+
++  `||` is OR for operations between single logicals.
+
+```{r or-single}
+TRUE || TRUE
+TRUE || FALSE
+0 || 2 # you can also turn non-zeros/0 to T/F
+```
+
++  `|` is OR for both single values and vectors.
+
+```{r}
+TRUE || FALSE
+c(TRUE, TRUE, FALSE) | c(TRUE, FALSE, FALSE)
+```
+
++ ! negates the immediately following logical value / expression.
+
+```{r negate}
+TRUE && ! FALSE
+! TRUE || FALSE
+! 1 || 2 & 0
+```
+
+
+You may also find `all()` and `any()` useful. See their documentations.
+
+```{r all-any-doc, exercise=TRUE}
+```
+
+### Practice
+
+In the following code chunk's `mat_practice`,
+
+1. find the row numbers where the values in the row sum up to smaller than 15
+2. find the column numbers where the values in the column sum up to larger than 10
+3. check whether all values in the second row are larger than values in the fourth row AND 
+value 5 is in the last column
+
+
+```{r practice-logical-relational, exercise=TRUE, exercise.lines=10}
+mat_practice <- matrix(sample(1:24, 24), 6)
+mat_practice
+1:6[ ] # fill in the bracket with a logical statement
+1:4[ ] # fill in the bracket with a logical statement
+```
+
+## Estimating Conditional Probabilities
+
+We will practice estimating conditional probabilities in multiple experiment setting.
+
+### Example: Rolling Two Fair Dice
+
+You roll two fair dice.
+
+$A$ is the event that _sum of the rolls is divisible by 4_,  
+$B$ is the event that _the two roll are the same_.
+
+Let's estimate $P(A|B)$ with $N$ simulations.
+
+1. Simulating $N$ simulations of multiple experiments.
+
+Recall, to simulate a single roll:
+
+```{r single-roll, eval=FALSE}
+sample(1:6, 1)
+```
+
+You may choose to write a loop and sample single roll twice in each iteration.
+
+```{r loop-single-rolls, eval=FALSE}
+roll1 <- numeric(N)
+roll2 <- numeric(N)
+for (i in 1:N) {
+  roll1[i] <- sample(1:6, 1)
+  roll2[i] <- sample(1:6, 1)
+}
+```
+
+Or, you can avoid writing a loop by sampling $4\times N$ _independent_ rolls and
+placing them into a matrix. 
+
+```{r N, include=FALSE}
+N <- 10
+```
+
+```{r all-rolls}
+m <- 2 # number of rolls in each simulation
+rolls <- sample(1:6, N * m, replace = TRUE) # replace = TRUE makes each roll independent
+mat <- matrix(rolls, nrow = N) # place them into matrix
+mat
+```
+
+> The columns represent the rolls and the rows represent the simulations.
+
+2. Extract the values you need to identify the events.
+
+We can use `rowSums()` to sum the values of each row.
+
+```{r sum-apply}
+rowSums(mat)
+```
+
+To access all simulations of the first rolls, you can use
+
+```{r first-roll}
+mat[, 1]
+
+```
+
+and for the second rolls
+
+```{r second-roll}
+mat[ , 2]
+```
+
+
+3. Identify the simulations that satisfy the conditional event and compute the estimated probability.
+
+Complete the code chunk below to estimate $P(A|B)$ with $N$ simulations.
+
+```{r compute-conditional-p, exercise=TRUE, exercise.lines=15}
+N <- 1000
+m <- 2
+rolls <- sample(1:6, N * m, replace = TRUE) 
+mat <- matrix(rolls, nrow = N)
+sum_of_rolls <- rowSums(mat)
+first_rolls <- mat[ , 1]
+second_rolls <- mat[ , 2]
+# complete the logic here
+pr_a_given_b
+```
+
 
 ## Simulating Conditional Events
 
-In this exercise, we will compute the probability of an event based on conditional probabilities.
+In this exercise, we will simulate evens based on conditional probabilities.
 
-Suppose the probability of an adult Canadian experiencing a regular flu during a winter season is 12% without a vaccination and with a vaccination, the infection probability is reduced to 3%. If 35% of the adult population in Canada gets vaccinated every year, what is the probability that a randomly selected Canadian adult experiences a regular flu during a winter?
+### Example: Flu in Canada
+
+Suppose the probability of an adult Canadian experiencing a regular flu during 
+a winter season is 12% without a vaccination and with a vaccination, the 
+infection probability is reduced to 5%. If 35% of the adult population in Canada 
+gets vaccinated every year, what is the probability that a randomly selected 
+Canadian adult experiences a regular flu during a winter?
 
 
 ```{r flu, exercise=TRUE, exercise.lines=30}
-N <- 100
+N <- 1000
 # the probabilities
-pvac <- 0.35
-pflu_vac <- 0.03
-pflu_no_vac <- 0.12
+p_vac <- 0.35
+p_flu_vac <- 0.03
+p_flu_no_vac <- 0.12
 # simulate vaccinated population with TRUE / FALSE otherwise
 s_vac <- sample(
   x = c(T, F), size = N, replace = TRUE,
-  prob = c(pvac, 1 - pvac)) # we can pass the probabilities manually
-# simulate flu infection based on vaccination
+  prob = c(p_vac, 1 - p_vac) # we can adjust the probabilities 
+)
+flu <- logical(N)
+# simulate flu infection based on vaccination in a loop
+p_flu
 ```
 
-> Hint: After simulating vaccinated popoulations, you can use a for loop with an if / else statement to simulate flu infections. If you are familiar with `tidyverse` or `dplyr`, you can check out `rowwise` operations.
-
+> Hint: After simulating vaccinated popoulations, you can use a for loop with an if / else statement to simulate flu infections. 
